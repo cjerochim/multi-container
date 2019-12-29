@@ -1,0 +1,23 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t cjerochim/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true cjerochim/react-test npm test
+
+after_success:
+  - docker build -t cjerochim/multi-client ./client
+  - docker build -t cjerochim/multi-nginx ./nginx
+  - docker build -t cjerochim/multi-server ./server
+  - docker build -t cjerochim/multi-worker ./worker
+  # Login
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push
+  - docker push cjerochim/multi-client
+  - docker push cjerochim/multi-nginx
+  - docker push cjerochim/multi-server
+  - docker push cjerochim/multi-worker
