@@ -21,3 +21,15 @@ after_success:
   - docker push cjerochim/multi-nginx
   - docker push cjerochim/multi-server
   - docker push cjerochim/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-southeast-2
+  app: multi-container
+  env: MultiContainer-env
+  bucket_name: elasticbeanstalk-ap-southeast-2-635319515320
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
